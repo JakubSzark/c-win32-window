@@ -1,4 +1,3 @@
-#define WINDOWS
 #define UNICODE
 
 /* Standard Libaries */
@@ -14,18 +13,22 @@ struct WindowOptions
     const wchar_t* title;
     unsigned int width, height;
 
-    std::function<void()> onOpened = nullptr;
-    std::function<void()> onLoop = nullptr;
-    std::function<void()> onClosed = nullptr;
+    std::function<void()> onOpened;
+    std::function<void()> onLoop;
+    std::function<void()> onClosed;
 };
 
 /* Function Definitions */
 
 int createWindow(WindowOptions& options);
 
+/* Global Variables */
+
+static WindowOptions options;
+
 /* Platform Specifics */
 
-#ifdef WINDOWS
+#ifdef __MING32__
 
     #pragma comment(lib, "opengl32.lib")
 
@@ -37,7 +40,6 @@ int createWindow(WindowOptions& options);
     /* Variables */
 
     static HDC hdc;
-    static WindowOptions options;
     static HGLRC wgl_context;
 
     /* Required Windows Desktop Functions */
@@ -148,6 +150,118 @@ int createWindow(WindowOptions& options);
         }
 
         return (int)msg.wParam;
+    }
+
+#elif __linux__
+
+    #include <GL/glx.h>
+    #include <X11/Xlib.h>
+
+    static GLXContext glc;
+
+    typedef GLXContext (*glXCreateContextAttribsARBProc)
+        (Display*, GLXFBConfig, GLXContext, Bool, const int*);
+
+    void mainLoop(Display* display, XID& win)
+    {
+        bool isRunning = true;
+        XEvent event;
+
+        while (isRunning)
+        {
+            if (XPending(display))
+                XNextEvent(display, &event);
+
+            switch (event.type)
+            {
+                case CreateNotify:
+                    if (options.onOpened != nullptr)
+                       options.onOpened();
+                    break;
+
+                case ClientMessage:
+                    isRunning = false;
+                    glXDestroyContext(display, glc);
+                    XCloseDisplay(display);
+                    if (options.onClosed != nullptr)
+                       options.onClosed();
+                    break;
+
+                case Expose:
+                    glViewport(0, 0, 800, 600);
+                    glClearColor(1, 0, 0, 1);
+                    glClear(GL_COLOR_BUFFER_BIT);
+                    if (options.onLoop != nullptr)
+                        options.onLoop();
+                    glXSwapBuffers(display, win);
+                    break;
+            }
+        }
+    }
+
+    int createWindow(WindowOptions& t_options)
+    {
+        options = t_options;
+
+        int att[] = {
+            GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None
+        };
+
+        auto display = XOpenDisplay(0);
+
+        if (display == NULL) 
+        {
+            printf("Cannot connect to X server!");
+            return 1;
+        }
+
+        auto root = DefaultRootWindow(display);
+        auto vi = glXChooseVisual(display, 0, att);
+
+        if (vi == NULL)
+        {
+            printf("No visual found!");
+            return 1;
+        }
+
+        auto cmap = XCreateColormap(display, root, vi->visual, AllocNone);
+
+        XSetWindowAttributes swa;
+        swa.colormap = cmap;
+        swa.event_mask = ExposureMask | KeyPressMask;
+
+        auto win = XCreateWindow(display, root, 0, 0, 
+            options.width, options.height, 0, vi->depth, InputOutput,
+                vi->visual, CWColormap | CWEventMask, &swa);
+
+        XSizeHints* hints = XAllocSizeHints();
+        hints->flags = PMinSize | PMaxSize;
+
+        hints->min_width = options.width;
+        hints->max_width = options.width;
+        hints->min_height = options.height;
+        hints->max_height = options.height;
+
+        XSetWMNormalHints(display, win, hints);
+        XSetWMSizeHints(display, win, hints, PMinSize | PMaxSize);
+        XSelectInput(display, win, ExposureMask | KeyPressMask);
+
+        XMapWindow(display, win);
+        XFlush(display);
+
+        char cTitle[sizeof(options.title)];
+        wcstombs(cTitle, options.title, sizeof(options.title));
+        XStoreName(display, win, cTitle);
+
+        Atom wmDelete = XInternAtom(display, "WM_DELETE_WINDOW", True);
+        XSetWMProtocols(display, win, &wmDelete, 1);
+
+        glc = glXCreateContext(display, vi, NULL, GL_TRUE);
+        glXMakeCurrent(display, win, glc);  
+
+        mainLoop(display, win);
+
+        return 0;
     }
 
 #endif
