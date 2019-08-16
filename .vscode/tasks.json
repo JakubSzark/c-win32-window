@@ -3,6 +3,32 @@
     "tasks": [
         {
             "type": "shell",
+            "label": "windowsdll",
+            "command": "C:\\MinGW64\\bin\\g++.exe",
+            "args": [
+                "-shared",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.dll",
+                "-lopengl32",
+                "-lgdi32",
+                "-static",
+                "-static-libgcc",
+                "-static-libstdc++"
+            ],
+            "options": {
+                "cwd": "C:\\MinGW64\\bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
             "label": "windows",
             "command": "C:\\MinGW64\\bin\\g++.exe",
             "args": [
@@ -34,15 +60,12 @@
                 "${fileDirname}/${fileBasenameNoExtension}.out",
                 "-std=c++17",
                 "-lX11",
-                "-lGL",
+                "-lGL"
             ],
             "options": {
                 "cwd": "/usr/bin"
             },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "group": "build"
         }
     ]
 }

@@ -1,8 +1,12 @@
 #define UNICODE
 
 #define ubyte unsigned char
+
 #if __MINGW32__
-#define uint unsigned int
+    #define uint unsigned int
+    #define API __declspec(dllexport)
+#else
+    #define API
 #endif
 
 /* Standard Libaries */
@@ -32,9 +36,9 @@ struct WindowOptions
     const wchar_t* title;
     uint windowSize, pixelSize;
 
-    std::function<void()> onOpened;
-    std::function<void()> onLoop;
-    std::function<void()> onClosed;
+    void(*onOpened)();
+    void(*onLoop)();
+    void(*onClosed)();
 };
 
 struct Color
@@ -97,10 +101,12 @@ struct Sprite
 
 /* Function Definitions */
 
-int createWindow(WindowOptions& options);
+extern "C" {
+    API int createWindow(WindowOptions& options);
+}
 
 void mainRender();
-void initDrawTarget();
+void initRendering();
 
 /* Global Variables */
 
@@ -155,7 +161,7 @@ static Sprite dts;
                     options.windowSize = rect.right - rect.left;
 
                     glEnable(GL_TEXTURE_2D);
-                    initDrawTarget();
+                    initRendering();
 
                     if (options.onOpened != nullptr)
                         options.onOpened();
@@ -328,7 +334,7 @@ static Sprite dts;
         glXMakeCurrent(display, win, glc);  
 
         glEnable(GL_TEXTURE_2D);
-        initDrawTarget();
+        initRendering();
         if (options.onOpened != nullptr)
             options.onOpened();
 
@@ -341,17 +347,14 @@ static Sprite dts;
 
 /* Rendering */
 
-void initDrawTarget()
+void initRendering()
 {
-    uint sSize = (uint)ceilf((float)options.windowSize / options.pixelSize);
+    /* Creating the Draw Target */
 
+    float scaledSize = (float)options.windowSize / 
+        options.pixelSize;
+    uint sSize = (uint)ceilf(scaledSize);
     drawTarget = Texture(sSize, sSize);
-    for (int i = 0; i < sSize * sSize; i++) 
-    {
-        drawTarget.pixels[i] = Color((ubyte)(rand() % 255), 
-            (ubyte)(rand() % 255), (ubyte)(rand() % 255), 255);
-    }
-
     dts = Sprite(drawTarget);
 }
 
@@ -373,4 +376,8 @@ void mainRender()
 
     if (options.onLoop != nullptr)
         options.onLoop();
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 
+        drawTarget.width, drawTarget.height, GL_RGBA, 
+            GL_UNSIGNED_BYTE, drawTarget.pixels.get());
 }
