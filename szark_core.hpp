@@ -152,8 +152,7 @@ static Sprite dts;
 
                     RECT rect;
                     GetClientRect(hWnd, &rect);
-                    options.width = rect.right - rect.left;
-                    options.height = rect.bottom - rect.top;
+                    options.windowSize = rect.right - rect.left;
 
                     glEnable(GL_TEXTURE_2D);
                     initDrawTarget();
@@ -205,7 +204,7 @@ static Sprite dts;
         HWND hWnd = CreateWindowEx(
             0, CLASS_NAME, options.title,
             WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME,
-            0, 0, options.width, options.height,
+            0, 0, options.windowSize, options.windowSize,
             NULL, NULL, hInstance, NULL 
         );
 
