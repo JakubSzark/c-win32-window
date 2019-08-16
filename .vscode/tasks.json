@@ -66,6 +66,24 @@
                 "cwd": "/usr/bin"
             },
             "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "linuxdll",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-shared",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.so",
+                "-std=c++17",
+                "-lX11",
+                "-lGL"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            },
+            "group": "build"
         }
     ]
 }
