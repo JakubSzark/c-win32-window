@@ -1,8 +1,9 @@
 #define UNICODE
-#define EXPORT __declspec(dllexport)
 
 #define ubyte unsigned char
+#if __MINGW32__
 #define uint unsigned int
+#endif
 
 /* Standard Libaries */
 
@@ -29,7 +30,7 @@
 struct WindowOptions
 {
     const wchar_t* title;
-    uint width, height, pixelSize;
+    uint windowSize, pixelSize;
 
     std::function<void()> onOpened;
     std::function<void()> onLoop;
@@ -96,7 +97,7 @@ struct Sprite
 
 /* Function Definitions */
 
-EXPORT int createWindow(WindowOptions& options);
+int createWindow(WindowOptions& options);
 
 void mainRender();
 void initDrawTarget();
@@ -251,13 +252,6 @@ static Sprite dts;
 
             switch (event.type)
             {
-                case CreateNotify:
-                    glEnable(GL_TEXTURE_2D);
-                    initDrawTarget();
-                    if (options.onOpened != nullptr)
-                       options.onOpened();
-                    break;
-
                 case ClientMessage:
                     isRunning = false;
                     glXDestroyContext(display, glc);
@@ -267,8 +261,8 @@ static Sprite dts;
                     break;
 
                 case Expose:
-                    glXSwapBuffers(display, win);
                     mainRender();
+                    glXSwapBuffers(display, win);
                     break;
             }
         }
@@ -306,16 +300,16 @@ static Sprite dts;
         swa.event_mask = ExposureMask | KeyPressMask;
 
         auto win = XCreateWindow(display, root, 0, 0, 
-            options.width, options.height, 0, vi->depth, InputOutput,
+            options.windowSize, options.windowSize, 0, vi->depth, InputOutput,
                 vi->visual, CWColormap | CWEventMask, &swa);
 
         XSizeHints* hints = XAllocSizeHints();
         hints->flags = PMinSize | PMaxSize;
 
-        hints->min_width = options.width;
-        hints->max_width = options.width;
-        hints->min_height = options.height;
-        hints->max_height = options.height;
+        hints->min_width = options.windowSize;
+        hints->max_width = options.windowSize;
+        hints->min_height = options.windowSize;
+        hints->max_height = options.windowSize;
 
         XSetWMNormalHints(display, win, hints);
         XSetWMSizeHints(display, win, hints, PMinSize | PMaxSize);
@@ -334,6 +328,11 @@ static Sprite dts;
         glc = glXCreateContext(display, vi, NULL, GL_TRUE);
         glXMakeCurrent(display, win, glc);  
 
+        glEnable(GL_TEXTURE_2D);
+        initDrawTarget();
+        if (options.onOpened != nullptr)
+            options.onOpened();
+
         mainLoop(display, win);
 
         return 0;
@@ -345,11 +344,10 @@ static Sprite dts;
 
 void initDrawTarget()
 {
-    uint sWidth = (uint)ceilf((float)options.width / options.pixelSize);
-    uint sHeight = (uint)ceilf((float)options.height / options.pixelSize);
+    uint sSize = (uint)ceilf((float)options.windowSize / options.pixelSize);
 
-    drawTarget = Texture(sWidth, sHeight);
-    for (int i = 0; i < sWidth * sHeight; i++) 
+    drawTarget = Texture(sSize, sSize);
+    for (int i = 0; i < sSize * sSize; i++) 
     {
         drawTarget.pixels[i] = Color((ubyte)(rand() % 255), 
             (ubyte)(rand() % 255), (ubyte)(rand() % 255), 255);
@@ -360,7 +358,7 @@ void initDrawTarget()
 
 void mainRender()
 {
-    glViewport(0, 0, options.width, options.height);
+    glViewport(0, 0, options.windowSize, options.windowSize);
     glClearColor(1, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

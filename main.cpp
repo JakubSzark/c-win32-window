@@ -21,8 +21,7 @@ int main()
     WindowOptions options;
     
     options.title = L"Example";
-    options.width = 800;
-    options.height = 600;
+    options.windowSize = 800;
     options.pixelSize = 8;
 
     options.onOpened = opened;
