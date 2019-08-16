@@ -1,43 +1,115 @@
 #define UNICODE
 #define EXPORT __declspec(dllexport)
 
+#define ubyte unsigned char
+#define uint unsigned int
+
 /* Standard Libaries */
 
 #include <stdio.h>
 #include <functional>
 #include <stdlib.h>
+#include <memory>
+#include <math.h>
+
+/* Platform Libraries */
+
+#ifdef __MINGW32__
+    #pragma comment(lib, "opengl32.lib")
+    #include "GL/gl.h"
+    #include <windows.h>
+    #include <tchar.h>
+#elif __linux__
+    #include <GL/glx.h>
+    #include <X11/Xlib.h>
+#endif
 
 /* Structs */
 
 struct WindowOptions
 {
     const wchar_t* title;
-    unsigned int width, height;
+    uint width, height, pixelSize;
 
     std::function<void()> onOpened;
     std::function<void()> onLoop;
     std::function<void()> onClosed;
 };
 
+struct Color
+{
+    ubyte r, g, b, a;
+    Color() : r(0), g(0), b(0), a(0) {}
+    Color(ubyte red, ubyte green, ubyte blue, ubyte alpha) :
+        r(red), g(green), b(blue), a(alpha) {}
+};
+
+struct Texture
+{
+    std::unique_ptr<Color[]> pixels = nullptr;
+    uint width = 0, height = 0;
+    Texture(uint t_width, uint t_height) : width(t_width), 
+        height(t_height) {
+        pixels = std::make_unique<Color[]>(width * height);
+    }
+
+    Color getPixel(uint x, uint y) 
+    {
+        if (x >= 0 && x < width && y >= 0 && y < height)
+            return pixels[y * width + x];
+        return Color(0, 0, 0, 0);
+    }
+
+    void setPixel(uint x, uint y, Color color)
+    {
+        if (x >= 0 && x < width && y >= 0 && y < height)
+            pixels[y * width + x] = color;
+    }
+
+    void fill(Color color)
+    {
+        for (int i = 0; i < width * height; i++) {
+            pixels[i] = color;
+        }
+    }
+};
+
+struct Sprite
+{
+    uint id = 0, width = 0, height = 0;
+    Sprite() {}
+    Sprite(Texture& texture)
+    {
+        width = texture.width;
+        height = texture.height;
+
+        glGenTextures(1, &id);
+        glBindTexture(GL_TEXTURE_2D, id);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+            width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.pixels.get());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    }
+};
+
 /* Function Definitions */
 
 EXPORT int createWindow(WindowOptions& options);
+
 void mainRender();
+void initDrawTarget();
 
 /* Global Variables */
 
 static WindowOptions options;
+static Texture drawTarget(0, 0);
+static Sprite dts;
 
 /* Platform Specifics */
 
 #ifdef __MINGW32__
-
-    #pragma comment(lib, "opengl32.lib")
-
-    #include "GL/gl.h"
-
-    #include <windows.h>
-    #include <tchar.h>
 
     /* Variables */
 
@@ -76,6 +148,14 @@ static WindowOptions options;
                     SetPixelFormat(hdc, ChoosePixelFormat(hdc, &pfd), &pfd);
                     wgl_context = wglCreateContext(hdc);
                     wglMakeCurrent(hdc, wgl_context);
+
+                    RECT rect;
+                    GetClientRect(hWnd, &rect);
+                    options.width = rect.right - rect.left;
+                    options.height = rect.bottom - rect.top;
+
+                    glEnable(GL_TEXTURE_2D);
+                    initDrawTarget();
 
                     if (options.onOpened != nullptr)
                         options.onOpened();
@@ -123,7 +203,7 @@ static WindowOptions options;
 
         HWND hWnd = CreateWindowEx(
             0, CLASS_NAME, options.title,
-            WS_OVERLAPPEDWINDOW,
+            WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME,
             0, 0, options.width, options.height,
             NULL, NULL, hInstance, NULL 
         );
@@ -154,9 +234,6 @@ static WindowOptions options;
 
 #elif __linux__
 
-    #include <GL/glx.h>
-    #include <X11/Xlib.h>
-
     static GLXContext glc;
 
     typedef GLXContext (*glXCreateContextAttribsARBProc)
@@ -175,6 +252,8 @@ static WindowOptions options;
             switch (event.type)
             {
                 case CreateNotify:
+                    glEnable(GL_TEXTURE_2D);
+                    initDrawTarget();
                     if (options.onOpened != nullptr)
                        options.onOpened();
                     break;
@@ -264,12 +343,29 @@ static WindowOptions options;
 
 /* Rendering */
 
+void initDrawTarget()
+{
+    uint sWidth = (uint)ceilf((float)options.width / options.pixelSize);
+    uint sHeight = (uint)ceilf((float)options.height / options.pixelSize);
+
+    drawTarget = Texture(sWidth, sHeight);
+    for (int i = 0; i < sWidth * sHeight; i++) 
+    {
+        drawTarget.pixels[i] = Color((ubyte)(rand() % 255), 
+            (ubyte)(rand() % 255), (ubyte)(rand() % 255), 255);
+    }
+
+    dts = Sprite(drawTarget);
+}
+
 void mainRender()
 {
+    glViewport(0, 0, options.width, options.height);
     glClearColor(1, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glColor3f(1, 1, 1);
+    glBindTexture(GL_TEXTURE_2D, dts.id);
 
     glBegin(GL_QUADS);
         glVertex2f(-1, -1); glTexCoord2f(0, 0);
