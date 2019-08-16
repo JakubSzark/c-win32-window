@@ -1,4 +1,5 @@
 #define UNICODE
+#define EXPORT __declspec(dllexport)
 
 /* Standard Libaries */
 
@@ -20,7 +21,8 @@ struct WindowOptions
 
 /* Function Definitions */
 
-int createWindow(WindowOptions& options);
+EXPORT int createWindow(WindowOptions& options);
+void mainRender();
 
 /* Global Variables */
 
@@ -28,7 +30,7 @@ static WindowOptions options;
 
 /* Platform Specifics */
 
-#ifdef __MING32__
+#ifdef __MINGW32__
 
     #pragma comment(lib, "opengl32.lib")
 
@@ -81,10 +83,8 @@ static WindowOptions options;
                 break;
             case WM_PAINT: 
                 {
-                    glViewport(0, 0, 800, 600);
-                    glClearColor(1, 0, 0, 1);
-                    glClear(GL_COLOR_BUFFER_BIT);
                     SwapBuffers(hdc);
+                    mainRender();
 
                     if (options.onLoop != nullptr)
                         options.onLoop();
@@ -188,12 +188,8 @@ static WindowOptions options;
                     break;
 
                 case Expose:
-                    glViewport(0, 0, 800, 600);
-                    glClearColor(1, 0, 0, 1);
-                    glClear(GL_COLOR_BUFFER_BIT);
-                    if (options.onLoop != nullptr)
-                        options.onLoop();
                     glXSwapBuffers(display, win);
+                    mainRender();
                     break;
             }
         }
@@ -265,3 +261,23 @@ static WindowOptions options;
     }
 
 #endif
+
+/* Rendering */
+
+void mainRender()
+{
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glColor3f(1, 1, 1);
+
+    glBegin(GL_QUADS);
+        glVertex2f(-1, -1); glTexCoord2f(0, 0);
+        glVertex2f( 1, -1); glTexCoord2f(1, 0);
+        glVertex2f( 1,  1); glTexCoord2f(1, 1);
+        glVertex2f(-1,  1); glTexCoord2f(0, 1);
+    glEnd();
+
+    if (options.onLoop != nullptr)
+        options.onLoop();
+}
