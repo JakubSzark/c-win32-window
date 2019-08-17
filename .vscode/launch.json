@@ -9,7 +9,7 @@
             "name": "Linux C++",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\bin\\windows\\CoreTest.out",
+            "program": "${workspaceFolder}/bin/linux/CoreTest.out",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

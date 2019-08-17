@@ -22,10 +22,7 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "group": "build"
         },
         {
             "type": "shell",
@@ -57,7 +54,7 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${workspaceFolder}\\bin\\linux\\CoreTest.out",
+                "${workspaceFolder}/bin/linux/CoreTest.out",
                 "-std=c++17",
                 "-lX11",
                 "-lGL"
@@ -73,9 +70,10 @@
             "command": "/usr/bin/g++",
             "args": [
                 "-shared",
+                "-fPIC",
                 "${file}",
                 "-o",
-                "${workspaceFolder}\\bin\\windows\\Szark Core.so",
+                "${workspaceFolder}/bin/linux/Szark Core.so",
                 "-std=c++17",
                 "-lX11",
                 "-lGL"
@@ -83,7 +81,10 @@
             "options": {
                 "cwd": "/usr/bin"
             },
-            "group": "build"
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
