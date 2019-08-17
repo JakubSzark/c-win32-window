@@ -52,7 +52,7 @@
 
 extern "C" 
 {
-    API int createWindow(WindowOptions& options);
+    API bool createWindow(WindowOptions& options);
     API void refreshDrawTarget(Color colors[], uint w, uint h);
 }
 

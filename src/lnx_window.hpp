@@ -42,7 +42,7 @@
         }
     }
 
-    int createWindow(WindowOptions& t_options)
+    bool createWindow(WindowOptions& t_options)
     {
         gOptions = t_options;
 
@@ -51,21 +51,8 @@
         };
 
         auto display = XOpenDisplay(0);
-
-        if (display == NULL) 
-        {
-            printf("Cannot connect to X server!");
-            return 1;
-        }
-
         auto root = DefaultRootWindow(display);
         auto vi = glXChooseVisual(display, 0, att);
-
-        if (vi == NULL)
-        {
-            printf("No visual found!");
-            return 1;
-        }
 
         auto cmap = XCreateColormap(display, root, vi->visual, AllocNone);
 
@@ -104,11 +91,12 @@
 
         glEnable(GL_TEXTURE_2D);
         initDrawTarget();
+
         if (gOptions.onOpened != nullptr)
             gOptions.onOpened();
 
         mainLoop(display, win);
 
-        return 0;
+        return true;
     }
 #endif

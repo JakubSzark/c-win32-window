@@ -84,7 +84,7 @@
         return 0;
     }
 
-    int createWindow(WindowOptions& t_options) 
+    bool createWindow(WindowOptions& t_options) 
     {
         gOptions = t_options;
         const wchar_t CLASS_NAME[] = L"DesktopApp";
@@ -107,12 +107,8 @@
 
         if (!hWnd)
         {
-            MessageBox(
-                NULL, 
-                L"Could not create Window!", 
-                L"ERROR", 0
-            );
-            return 1;
+            printf("Could not create Window!");
+            return false;
         }
 
         /* Shows the Window */
@@ -126,6 +122,6 @@
             DispatchMessage(&msg);
         }
 
-        return (int)msg.wParam;
+        return true;
     }
 #endif
