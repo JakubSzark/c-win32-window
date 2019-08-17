@@ -54,6 +54,7 @@ extern "C"
 {
     API bool createWindow(WindowOptions& options);
     API void refreshDrawTarget(Color colors[], uint w, uint h);
+    API Texture getImage(const wchar_t* imagePath);
 }
 
 /* Internal Function Definitions */
@@ -67,12 +68,14 @@ static Texture gDrawTarget;
 static WindowOptions gOptions;
 static Sprite gDTS;
 
-/* Window Creation */
+/* Platform Functions */
 
 #ifdef __MINGW32__
     #include "win_window.hpp"
+    #include "win_image.hpp"
 #elif __linux__
     #include "lnx_window.hpp"
+    #include "lnx_image.hpp"
 #endif
 
 /* Rendering */
