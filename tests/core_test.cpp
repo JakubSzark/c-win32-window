@@ -1,19 +1,15 @@
-#include "szark_core.hpp"
+#include "../src/szark_core.hpp"
 
-void opened()
-{
-    printf("Opened");
+void opened() {
+
 }
 
-void loop()
-{
-    putchar('.');
+void loop() {
+
 }
 
-void closed()
-{
-    printf("Closed");
-    getchar();
+void closed() {
+
 }
 
 int main()

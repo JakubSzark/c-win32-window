@@ -57,26 +57,6 @@ struct Texture
         height(t_height) {
         pixels = std::make_unique<Color[]>(width * height);
     }
-
-    Color getPixel(uint x, uint y) 
-    {
-        if (x >= 0 && x < width && y >= 0 && y < height)
-            return pixels[y * width + x];
-        return Color(0, 0, 0, 0);
-    }
-
-    void setPixel(uint x, uint y, Color color)
-    {
-        if (x >= 0 && x < width && y >= 0 && y < height)
-            pixels[y * width + x] = color;
-    }
-
-    void fill(Color color)
-    {
-        for (int i = 0; i < width * height; i++) {
-            pixels[i] = color;
-        }
-    }
 };
 
 struct Sprite
@@ -101,8 +81,10 @@ struct Sprite
 
 /* Function Definitions */
 
-extern "C" {
+extern "C" 
+{
     API int createWindow(WindowOptions& options);
+    API void refreshDrawTarget(Color colors[], uint w, uint h);
 }
 
 void mainRender();
@@ -376,8 +358,12 @@ void mainRender()
 
     if (options.onLoop != nullptr)
         options.onLoop();
+}
 
+void refreshDrawTarget(Color colors[], uint w, uint h)
+{
+    glBindTexture(GL_TEXTURE_2D, dts.id);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 
-        drawTarget.width, drawTarget.height, GL_RGBA, 
-            GL_UNSIGNED_BYTE, drawTarget.pixels.get());
+        w, h, GL_RGBA, 
+            GL_UNSIGNED_BYTE, colors);
 }
