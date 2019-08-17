@@ -62,9 +62,6 @@
                 {
                     SwapBuffers(hdc);
                     mainRender();
-
-                    if (gOptions.onLoop != nullptr)
-                        gOptions.onLoop();
                 }
                 break;
             case WM_DESTROY: 
