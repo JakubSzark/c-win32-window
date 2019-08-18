@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <memory>
 #include <math.h>
+#include <iostream>
+#include <fstream>
 
 /* Windows Libraries */
 
@@ -54,7 +56,7 @@ extern "C"
 {
     API bool createWindow(WindowOptions& options);
     API void refreshDrawTarget(Color colors[], uint w, uint h);
-    API Texture getImage(const wchar_t* imagePath);
+    API Texture readImage(const char* imagePath);
 }
 
 /* Internal Function Definitions */
@@ -72,12 +74,11 @@ static Sprite gDTS;
 
 #ifdef __MINGW32__
     #include "win_window.hpp"
-    #include "win_image.hpp"
 #elif __linux__
     #include "lnx_window.hpp"
-    #include "lnx_image.hpp"
 #endif
 
 /* Rendering */
 
+#include "image_io.hpp"
 #include "rendering.hpp"

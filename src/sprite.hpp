@@ -35,7 +35,7 @@ struct Sprite
         glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
-            width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.pixels.get());
+            width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.pixels);
 
         // Texture Parameters for Pixel-Art
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

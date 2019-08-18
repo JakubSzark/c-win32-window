@@ -28,10 +28,10 @@ void mainRender()
     glBindTexture(GL_TEXTURE_2D, gDTS.id);
 
     glBegin(GL_QUADS);
-        glVertex2f(-1, -1); glTexCoord2f(0, 0);
-        glVertex2f( 1, -1); glTexCoord2f(1, 0);
-        glVertex2f( 1,  1); glTexCoord2f(1, 1);
-        glVertex2f(-1,  1); glTexCoord2f(0, 1);
+        glTexCoord2f(0, 0); glVertex2f(-1, -1); 
+        glTexCoord2f(1, 0); glVertex2f( 1, -1); 
+        glTexCoord2f(1, 1); glVertex2f( 1,  1); 
+        glTexCoord2f(0, 1); glVertex2f(-1,  1); 
     glEnd();
 
     if (gOptions.onLoop != nullptr)

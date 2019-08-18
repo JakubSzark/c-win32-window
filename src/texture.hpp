@@ -13,20 +13,30 @@
 struct Texture
 {
     // Holds the Array of Colors in Memory
-    std::unique_ptr<Color[]> pixels = nullptr;
+    Color* pixels = nullptr;
 
     // Width in Pixels
-    uint width;
+    uint width = 0;
 
     // Height in Pixels
-    uint height;
+    uint height = 0;
 
     // Empty Constructor
     Texture() {}
 
     // Constructor for Creating a Blank Texture
-    Texture(uint t_width, uint t_height) : width(t_width), 
-        height(t_height) {
-        pixels = std::make_unique<Color[]>(width * height);
+    Texture(uint t_width, uint t_height) : 
+        width(t_width), height(t_height) {
+        pixels = new Color[width * height];
+    }
+
+    void free() {
+        delete[] pixels;
+    }
+
+    void setPixel(uint x, uint y, Color color)
+    {
+        if (x >= 0 && x < width && y >= 0 && y < height)
+            pixels[y * width + x] = color;        
     }
 };
