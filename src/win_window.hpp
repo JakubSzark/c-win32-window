@@ -49,7 +49,8 @@
 
                     RECT rect;
                     GetClientRect(hWnd, &rect);
-                    gOptions.windowSize = rect.right - rect.left;
+                    gOptions.height = rect.bottom - rect.top;
+                    gOptions.width = rect.right - rect.left;
 
                     glEnable(GL_TEXTURE_2D);
                     initDrawTarget();
@@ -98,15 +99,11 @@
         HWND hWnd = CreateWindowEx(
             0, CLASS_NAME, gOptions.title,
             WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME,
-            0, 0, gOptions.windowSize, gOptions.windowSize,
+            0, 0, gOptions.width, gOptions.height,
             NULL, NULL, hInstance, NULL 
         );
 
-        if (!hWnd)
-        {
-            printf("Could not create Window!");
-            return false;
-        }
+        if (!hWnd) return false;
 
         /* Shows the Window */
         ShowWindow(hWnd, SW_SHOW);

@@ -61,16 +61,16 @@
         swa.event_mask = ExposureMask | KeyPressMask;
 
         auto win = XCreateWindow(display, root, 0, 0, 
-            gOptions.windowSize, gOptions.windowSize, 0, vi->depth, InputOutput,
+            gOptions.width, gOptions.height, 0, vi->depth, InputOutput,
                 vi->visual, CWColormap | CWEventMask, &swa);
 
         XSizeHints* hints = XAllocSizeHints();
         hints->flags = PMinSize | PMaxSize;
 
-        hints->min_width = gOptions.windowSize;
-        hints->max_width = gOptions.windowSize;
-        hints->min_height = gOptions.windowSize;
-        hints->max_height = gOptions.windowSize;
+        hints->min_width = gOptions.width;
+        hints->max_width = gOptions.width;
+        hints->min_height = gOptions.height;
+        hints->max_height = gOptions.height;
 
         XSetWMNormalHints(display, win, hints);
         XSetWMSizeHints(display, win, hints, PMinSize | PMaxSize);

@@ -10,17 +10,21 @@
 // Function for Creating a Draw Target
 void initDrawTarget()
 {
-    float scaledSize = (float)gOptions.windowSize / 
+    float scaledWidth = (float)gOptions.width / 
         gOptions.pixelSize;
-    uint sSize = (uint)ceilf(scaledSize);
-    gDrawTarget = Texture(sSize, sSize);
+    uint sSize = (uint)ceilf(scaledWidth);
+
+    float scaledHeight = (float)gOptions.height /
+        gOptions.pixelSize;
+
+    gDrawTarget = Texture(scaledWidth, scaledHeight);
     gDTS = Sprite(gDrawTarget);
 }
 
 // Function where the Draw Target is Rendered
 void mainRender()
 {
-    glViewport(0, 0, gOptions.windowSize, gOptions.windowSize);
+    glViewport(0, 0, gOptions.width, gOptions.height);
     glClearColor(1, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

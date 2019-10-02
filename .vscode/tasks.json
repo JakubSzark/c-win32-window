@@ -7,7 +7,7 @@
             "command": "C:\\MinGW64\\bin\\g++.exe",
             "args": [
                 "-shared",
-                "${file}",
+                "${workspaceFolder}\\src\\szark_core.cpp",
                 "-o",
                 "${workspaceFolder}\\bin\\windows\\Szark Core.dll",
                 "-lopengl32",
@@ -29,52 +29,12 @@
         },
         {
             "type": "shell",
-            "label": "windows",
-            "command": "C:\\MinGW64\\bin\\g++.exe",
-            "args": [
-                "-g",
-                "${file}",
-                "-o",
-                "${workspaceFolder}\\bin\\windows\\CoreTest.exe",
-                "-lopengl32",
-                "-lgdi32",
-                "-static",
-                "-static-libgcc",
-                "-static-libstdc++"
-            ],
-            "options": {
-                "cwd": "C:\\MinGW64\\bin"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ]
-        },
-        {
-            "type": "shell",
-            "label": "linux",
-            "command": "/usr/bin/g++",
-            "args": [
-                "-g",
-                "${file}",
-                "-o",
-                "${workspaceFolder}/bin/linux/CoreTest.out",
-                "-std=c++17",
-                "-lX11",
-                "-lGL"
-            ],
-            "options": {
-                "cwd": "/usr/bin"
-            },
-            "group": "build"
-        },
-        {
-            "type": "shell",
             "label": "linuxdll",
             "command": "/usr/bin/g++",
             "args": [
                 "-shared",
                 "-fPIC",
-                "${file}",
+                "${workspaceFolder}/src/szark_core.cpp",
                 "-o",
                 "${workspaceFolder}/bin/linux/Szark Core.so",
                 "-std=c++17",

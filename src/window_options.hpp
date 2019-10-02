@@ -10,21 +10,14 @@
 
 struct WindowOptions
 {
-    // Title of the Window
     const wchar_t* title;
 
-    // Square Size of the Window
-    uint windowSize;
+    uint width; 
+    uint height;
 
-    // Size of Each Pixel
     uint pixelSize;
 
-    // Called when a Window Opens
     void(*onOpened)();
-
-    // Called every Frame
-    void(*onLoop)();
-
-    // Called when a Window Closes
     void(*onClosed)();
+    void(*onLoop)();
 };
