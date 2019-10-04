@@ -1,23 +1,24 @@
 {
+    // See https://go.microsoft.com/fwlink/?LinkId=733558 
+    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
         {
             "type": "shell",
-            "label": "windowsdll",
-            "command": "C:\\MinGW64\\bin\\g++.exe",
+            "label": "Windows DLL",
+            "command": "C:\\MingW64\\bin\\gcc.exe",
             "args": [
                 "-shared",
-                "${workspaceFolder}\\src\\szark_core.cpp",
+                "${workspaceFolder}\\src\\*.c",
                 "-o",
-                "${workspaceFolder}\\bin\\windows\\Szark Core.dll",
+                "${workspaceFolder}\\lib\\windows\\SzarkCore.dll",
                 "-lopengl32",
                 "-lgdi32",
                 "-static",
-                "-static-libgcc",
-                "-static-libstdc++"
+                "-static-libgcc"
             ],
             "options": {
-                "cwd": "C:\\MinGW64\\bin"
+                "cwd": "C:\\MingW64\\bin"
             },
             "problemMatcher": [
                 "$gcc"
@@ -26,25 +27,6 @@
                 "kind": "build",
                 "isDefault": true
             }
-        },
-        {
-            "type": "shell",
-            "label": "linuxdll",
-            "command": "/usr/bin/g++",
-            "args": [
-                "-shared",
-                "-fPIC",
-                "${workspaceFolder}/src/szark_core.cpp",
-                "-o",
-                "${workspaceFolder}/bin/linux/Szark Core.so",
-                "-std=c++17",
-                "-lX11",
-                "-lGL"
-            ],
-            "options": {
-                "cwd": "/usr/bin"
-            },
-            "group": "build"
         }
     ]
 }
