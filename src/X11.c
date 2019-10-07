@@ -7,7 +7,7 @@
         Main context loop,
         Processing inputs, rendering, logic
     */
-    void MainLoop(Display* display, XID* window)
+    void MainLoop(Display* display, Window window)
     {
         XEvent event;
         bool isRunning = true;
@@ -86,7 +86,7 @@
         glXMakeCurrent(display, window, gContext);
 
         glEnable(GL_TEXTURE_2D);        
-        Start();
+        Setup();
 
         if (gConfig.onOpen != NULL)
             gConfig.onOpen();
