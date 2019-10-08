@@ -102,6 +102,9 @@
     */
     bool CreateContext(const Config* cfg)
     {
+        if (cfg->onOpen == NULL)
+            printf("OnOpen is NULL");
+
         gConfig = *cfg;
         const wchar_t* CLASS = L"DesktopApp";
         HINSTANCE hInstance = GetModuleHandle(NULL);
