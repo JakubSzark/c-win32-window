@@ -1,7 +1,9 @@
 #include "Core.h"
 
 #ifdef OS_LINUX
+    static Window gWindow;
     static GLXContext gContext;
+    static Display* gDisplay;
 
     /*
         Main context loop,
@@ -82,10 +84,32 @@
         gContext = glXCreateContext(display, vi, NULL, GL_TRUE);
         glXMakeCurrent(display, window, gContext);
 
+        gDisplay = display;
+        gWindow = window;
+
         glEnable(GL_TEXTURE_2D);        
         Setup();
+
         MainLoop(display, window);
 
+        return true;
+    }
+
+    /*
+        Changes size of the window
+    */
+    bool SetSize(uint width, uint height)
+    {
+        XResizeWindow(gDisplay, gWindow, width, height);
+        return true;
+    }
+
+    /*
+        Changes the Title of the X11 window
+    */
+    bool SetTitle(const char* title)
+    {
+        XStoreName(gDisplay, gWindow, title);
         return true;
     }
 #endif
