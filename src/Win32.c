@@ -102,8 +102,16 @@
 
         RegisterClass(&wc);
 
+        size_t newSize = strlen(gConfig.title) + 1;
+        wchar_t* newTitle = (wchar_t*)calloc(newSize, 
+            sizeof(unsigned short));
+
+        size_t convertedChars = 0;
+        mbstowcs_s(&convertedChars, newTitle, newSize, 
+            gConfig.title, _TRUNCATE);
+
         HWND hWnd = CreateWindowEx(
-            0, CLASS, gConfig.title,
+            0, CLASS, newTitle,
             WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME,
             0, 0, gConfig.width, gConfig.height,
             NULL, NULL, hInstance, NULL 
