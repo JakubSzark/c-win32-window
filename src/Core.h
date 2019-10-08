@@ -55,7 +55,7 @@ typedef unsigned int uint;
 
 typedef struct Config 
 {
-    const wchar_t* title;
+    const char* title;
     uint width, height, pixelSize;
     bool fullscreen, decorated, vsync;
     void(*onOpen)(), (*onClose)(), (*onLoop)();

@@ -75,9 +75,7 @@
         XMapWindow(display, window);
         XFlush(display);
 
-        char title[sizeof(gConfig.title)];
-        wcstombs(title, gConfig.title, sizeof(gConfig.title));
-        XStoreName(display, window, title);
+        XStoreName(display, window, gConfig.title);
 
         Atom wmDelete = XInternAtom(display, "WM_DELETE_WINDOW", True);
         XSetWMProtocols(display, window, &wmDelete, 1);
