@@ -3,6 +3,24 @@
 #ifdef OS_WINDOWS
     static HDC gHDC;
     static HGLRC gContext;
+    static HWND gHWND;
+
+    /*
+        Turns normal ASCII char to WCHAR*
+        Please Free after use.
+    */
+    wchar_t* ConvertToWChar(const char* title)
+    {
+        size_t newSize = strlen(title) + 1;
+        wchar_t* newStr = (wchar_t*)calloc(newSize, 
+            sizeof(unsigned short));
+
+        size_t convertedChars = 0;
+        mbstowcs_s(&convertedChars, newStr, newSize, 
+            title, _TRUNCATE);
+
+        return newStr;        
+    }
 
     /*
         Generates a description of how a
@@ -41,6 +59,8 @@
                 {
                     // Set Context Pixel Format Descriptor
                     gHDC = GetDC(hWnd);
+                    gHWND = hWnd;
+
                     PIXELFORMATDESCRIPTOR pfd = GeneratePFD();
                     SetPixelFormat(gHDC, ChoosePixelFormat(gHDC, &pfd), &pfd);
 
@@ -50,10 +70,6 @@
                     glEnable(GL_TEXTURE_2D);
 
                     Setup();
-
-                    // Call User Open
-                    if (gConfig.onOpen != NULL)
-                        gConfig.onOpen();
                 }
                 break;
             case WM_PAINT: 
@@ -70,10 +86,6 @@
                     PostQuitMessage(0);
 
                     Cleanup();
-
-                    // Call User Cleanup
-                    if (gConfig.onClose != NULL)
-                        gConfig.onClose();
                 }
                 break;
             default:
@@ -102,13 +114,7 @@
 
         RegisterClass(&wc);
 
-        size_t newSize = strlen(gConfig.title) + 1;
-        wchar_t* newTitle = (wchar_t*)calloc(newSize, 
-            sizeof(unsigned short));
-
-        size_t convertedChars = 0;
-        mbstowcs_s(&convertedChars, newTitle, newSize, 
-            gConfig.title, _TRUNCATE);
+        wchar_t* newTitle = ConvertToWChar(gConfig.title);
 
         HWND hWnd = CreateWindowEx(
             0, CLASS, newTitle,
@@ -130,6 +136,41 @@
             DispatchMessage(&msg);
         }
 
+        free(newTitle);
         return true;        
+    }
+
+    /*
+        Sets the Size of the Window. Duh.
+        Returns whether or not successful.
+    */
+    bool SetSize(uint width, uint height)
+    {
+        MONITORINFO mi = { sizeof(mi) };
+        HMONITOR hmon = MonitorFromWindow(gHWND,
+            MONITOR_DEFAULTTONEAREST);
+
+        RECT pos;
+        GetWindowRect(gHWND, &pos);
+
+        if (!GetMonitorInfo(hmon, &mi)) return false;
+        SetWindowPos(gHWND, HWND_TOP, pos.left, pos.top,
+            mi.rcMonitor.right - mi.rcMonitor.left, 
+                mi.rcMonitor.bottom - mi.rcMonitor.top, 0);
+
+        return true;
+    }
+
+    /*
+        Set the Title of the Window. Duh.
+        Returns whether or not successful.
+    */
+    bool SetTitle(const char* title) 
+    {
+        wchar_t* newTitle = ConvertToWChar(title);
+        bool success = SetWindowText(gHWND, newTitle);
+        free(newTitle);
+
+        return success;
     }
 #endif

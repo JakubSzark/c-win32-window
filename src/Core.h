@@ -71,9 +71,8 @@ EXPORT bool CreateContext(const Config* cfg);
 EXPORT void RefreshScreen(const Color* colors, 
     uint width, uint height);
 
-EXPORT void SetSize(uint width, uint height);
-EXPORT void SetTitle(const char* newTitle);
-EXPORT void SetFullscreen(bool isFullscreen);
+EXPORT bool SetSize(uint width, uint height);
+EXPORT bool SetTitle(const char* newTitle);
 
 /* Globals */
 
