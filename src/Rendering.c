@@ -9,6 +9,19 @@
 static Color* gScreen;
 static uint gScreenID;
 
+bool SetCallbacks(void(*onOpen)(), 
+    void(*onClose)(), void(*onLoop)())
+{
+    if (onOpen == NULL || onClose == NULL ||
+        onLoop == NULL) return false;
+
+    gOpen = onOpen;
+    gClose = onClose;
+    gLoop = onLoop;
+
+    return true;
+}
+
 /*
     Creates a screen texture made up of colors.
     Then sends that information to the GPU.
@@ -35,8 +48,7 @@ void Setup()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
     // Call User Open
-    if (gConfig.onOpen != NULL)
-        gConfig.onOpen();
+    gOpen();
 }
 
 /*
@@ -45,8 +57,7 @@ void Setup()
 void Cleanup() 
 {
     // Call User Cleanup
-    if (gConfig.onClose != NULL)
-        gConfig.onClose();
+    gClose();
 
     if (gScreen)
         free(gScreen);
@@ -78,9 +89,7 @@ void Render()
         glTexCoord2f(0, 1); glVertex2f(-1,  1); 
     glEnd();
 
-    // Call User Loop
-    if (gConfig.onLoop != NULL)
-        gConfig.onLoop();
+    gLoop();
 }
 
 /*

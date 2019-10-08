@@ -60,7 +60,6 @@ typedef struct Config
     const char* title;
     uint width, height, pixelSize;
     bool fullscreen, decorated, vsync;
-    void(*onOpen)(), (*onClose)(), (*onLoop)();
 } Config;
 
 typedef struct Color {
@@ -70,6 +69,8 @@ typedef struct Color {
 /* Exported Functions */
 
 EXPORT bool CreateContext(const Config* cfg);
+EXPORT bool SetCallbacks(void(*onOpen)(), 
+    void(*onClose)(), void(*onLoop)());
 EXPORT void RefreshScreen(const Color* colors, 
     uint width, uint height);
 
@@ -79,6 +80,7 @@ EXPORT bool SetTitle(const char* newTitle);
 /* Globals */
 
 static Config gConfig;
+static void(*gOpen)(), (*gClose)(), (*gLoop)();
 
 /* Functions */
 

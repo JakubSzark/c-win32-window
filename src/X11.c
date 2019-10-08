@@ -23,8 +23,7 @@
                     isRunning = false;
                     glXDestroyContext(display, gContext);
                     XCloseDisplay(display);
-                    if (gConfig.onClose != NULL)
-                        gConfig.onClose();                    
+                    Cleanup();
                     break;
 
                 case Expose:
@@ -85,10 +84,6 @@
 
         glEnable(GL_TEXTURE_2D);        
         Setup();
-
-        if (gConfig.onOpen != NULL)
-            gConfig.onOpen();
-
         MainLoop(display, window);
 
         return true;
