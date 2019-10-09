@@ -46,8 +46,6 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include <stdio.h>
-
 /* Primitive Definitions */
 
 typedef unsigned char byte;
@@ -59,7 +57,7 @@ typedef struct Config
 {
     const char* title;
     uint width, height, pixelSize;
-    bool fullscreen, decorated, vsync;
+    bool fullscreen;
 } Config;
 
 typedef struct Color {

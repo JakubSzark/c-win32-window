@@ -116,10 +116,16 @@
 
         wchar_t* newTitle = ConvertToWChar(gConfig.title);
 
+        DWORD style = cfg->fullscreen ? WS_POPUP :
+            (WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME);
+        uint newWidth = cfg->fullscreen ? GetSystemMetrics(SM_CXSCREEN) :
+            gConfig.width;
+        uint newHeight = cfg->fullscreen ? GetSystemMetrics(SM_CYSCREEN) :
+            gConfig.height;
+
         HWND hWnd = CreateWindowEx(
-            0, CLASS, newTitle,
-            WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME,
-            0, 0, gConfig.width, gConfig.height,
+            0, CLASS, newTitle, style,
+            0, 0, newWidth, newHeight,
             NULL, NULL, hInstance, NULL 
         );
 
