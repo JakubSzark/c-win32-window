@@ -116,16 +116,10 @@
 
         wchar_t* newTitle = ConvertToWChar(gConfig.title);
 
-        DWORD style = cfg->fullscreen ? WS_POPUP :
-            (WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME);
-        uint newWidth = cfg->fullscreen ? GetSystemMetrics(SM_CXSCREEN) :
-            gConfig.width;
-        uint newHeight = cfg->fullscreen ? GetSystemMetrics(SM_CYSCREEN) :
-            gConfig.height;
-
         HWND hWnd = CreateWindowEx(
-            0, CLASS, newTitle, style,
-            0, 0, newWidth, newHeight,
+            0, CLASS, newTitle, 
+            WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME,
+            0, 0, cfg->width, cfg->height,
             NULL, NULL, hInstance, NULL 
         );
 
@@ -144,27 +138,6 @@
 
         free(newTitle);
         return true;        
-    }
-
-    /*
-        Sets the Size of the Window. Duh.
-        Returns whether or not successful.
-    */
-    bool SetSize(uint width, uint height)
-    {
-        MONITORINFO mi = { sizeof(mi) };
-        HMONITOR hmon = MonitorFromWindow(gHWND,
-            MONITOR_DEFAULTTONEAREST);
-
-        RECT pos;
-        GetWindowRect(gHWND, &pos);
-
-        if (!GetMonitorInfo(hmon, &mi)) return false;
-        SetWindowPos(gHWND, HWND_TOP, pos.left, pos.top,
-            mi.rcMonitor.right - mi.rcMonitor.left, 
-                mi.rcMonitor.bottom - mi.rcMonitor.top, 0);
-
-        return true;
     }
 
     /*

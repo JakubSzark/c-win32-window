@@ -71,8 +71,6 @@ EXPORT bool SetCallbacks(void(*onOpen)(),
     void(*onClose)(), void(*onLoop)());
 EXPORT void RefreshScreen(const Color* colors, 
     uint width, uint height);
-
-EXPORT bool SetSize(uint width, uint height);
 EXPORT bool SetTitle(const char* newTitle);
 
 /* Globals */

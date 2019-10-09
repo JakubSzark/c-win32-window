@@ -96,15 +96,6 @@
     }
 
     /*
-        Changes size of the window
-    */
-    bool SetSize(uint width, uint height)
-    {
-        XResizeWindow(gDisplay, gWindow, width, height);
-        return true;
-    }
-
-    /*
         Changes the Title of the X11 window
     */
     bool SetTitle(const char* title)
