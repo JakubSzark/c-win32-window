@@ -1,7 +1,6 @@
 #include "Core.h"
 
 #ifdef OS_WINDOWS
-    static HDC gHDC;
     static HGLRC gContext;
     static HWND gHWND;
 
@@ -58,15 +57,15 @@
             case WM_CREATE: 
                 {
                     // Set Context Pixel Format Descriptor
-                    gHDC = GetDC(hWnd);
+                    HDC hdc = GetDC(hWnd);
                     gHWND = hWnd;
 
                     PIXELFORMATDESCRIPTOR pfd = GeneratePFD();
-                    SetPixelFormat(gHDC, ChoosePixelFormat(gHDC, &pfd), &pfd);
+                    SetPixelFormat(hdc, ChoosePixelFormat(hdc, &pfd), &pfd);
 
                     // Make OpenGL work on current Context
-                    gContext = wglCreateContext(gHDC);
-                    wglMakeCurrent(gHDC, gContext);
+                    gContext = wglCreateContext(hdc);
+                    wglMakeCurrent(GetDC(hWnd), gContext);
                     glEnable(GL_TEXTURE_2D);
 
                     Setup();
@@ -75,7 +74,7 @@
             case WM_PAINT: 
                 {
                     // Update and Swap Buffer
-                    SwapBuffers(gHDC);
+                    SwapBuffers(GetDC(hWnd));
                     Render();
                 }
                 break;
@@ -125,6 +124,8 @@
 
         // Check for Window Creation Failure
         if (!hWnd) return false;
+
+        // TODO: Add Window Struct Creation
 
         ShowWindow(hWnd, SW_SHOW);
         UpdateWindow(hWnd);

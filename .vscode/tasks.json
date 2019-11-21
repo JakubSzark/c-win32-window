@@ -27,27 +27,6 @@
                 "kind": "build",
                 "isDefault": true
             }
-        },
-        {
-            "type": "shell",
-            "label": "Linux SO",
-            "command": "/usr/bin/gcc",
-            "args": [
-                "-shared",
-                "-fPIC",
-                "${workspaceFolder}/src/*.c",
-                "-o",
-                "${workspaceFolder}/lib/linux/SzarkCore.so",
-                "-lX11",
-                "-lGL"
-            ],
-            "options": {
-                "cwd": "/usr/bin"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "build"
         }
     ]
 }

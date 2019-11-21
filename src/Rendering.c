@@ -9,16 +9,11 @@
 static Color* gScreen;
 static uint gScreenID;
 
-bool SetCallbacks(void(*onOpen)(), 
-    void(*onClose)(), void(*onLoop)())
+bool SetCallbacks(void(*callback)())
 {
-    if (onOpen == NULL || onClose == NULL ||
-        onLoop == NULL) return false;
-
-    gOpen = onOpen;
-    gClose = onClose;
-    gLoop = onLoop;
-
+    if (callback == NULL) 
+        return false;
+    gCallback = callback;
     return true;
 }
 

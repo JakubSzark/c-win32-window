@@ -7,38 +7,19 @@
 
 #pragma once
 
-/* Operating System Defines */
-
-#ifdef _WIN32
-    #define OS_WINDOWS
-#elif defined(__linux__)
-    #define OS_LINUX
-#endif
-
 /* Global Defines */
 
 #define UNICODE
 
 /* OS Specific Libraries */
 
-#ifdef OS_WINDOWS
-    #include <GL/gl.h>
-    #pragma comment(lib, "opengl32.lib")
-    #include <windows.h>
-#endif
-
-#ifdef OS_LINUX
-    #include <GL/glx.h>
-    #include <X11/Xlib.h>
-#endif
+#include <GL/gl.h>
+#pragma comment(lib, "opengl32.lib")
+#include <windows.h>
 
 /* Windows Export Keyword */
 
-#ifdef OS_WINDOWS
-    #define EXPORT __declspec(dllexport)
-#elif defined(OS_LINUX)
-    #define EXPORT
-#endif
+#define EXPORT __declspec(dllexport)
 
 /* Standard Headers */
 
@@ -64,6 +45,14 @@ typedef struct Color {
     byte red, green, blue, alpha;
 } Color;
 
+typedef struct Window 
+{
+    Config config;
+    HGLRC glContext;
+    HWND hwnd;
+    void(*eventCallback)(int);
+} Window;
+
 /* Exported Functions */
 
 EXPORT bool CreateContext(const Config* cfg);
@@ -76,7 +65,7 @@ EXPORT bool SetTitle(const char* newTitle);
 /* Globals */
 
 static Config gConfig;
-static void(*gOpen)(), (*gClose)(), (*gLoop)();
+static void(*gCallback)();
 
 /* Functions */
 
