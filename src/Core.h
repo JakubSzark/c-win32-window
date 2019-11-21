@@ -49,7 +49,7 @@ typedef struct Window
 {
     Config config;
     HGLRC glContext;
-    HWND hwnd;
+    HWND hWnd;
     void(*eventCallback)(int);
 } Window;
 

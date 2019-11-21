@@ -125,7 +125,9 @@
         // Check for Window Creation Failure
         if (!hWnd) return false;
 
-        // TODO: Add Window Struct Creation
+        Window window = { };
+        window.config = cfg;
+        window.hWnd = hWnd;
 
         ShowWindow(hWnd, SW_SHOW);
         UpdateWindow(hWnd);
