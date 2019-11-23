@@ -50,6 +50,10 @@ typedef struct Window
     HWND hWnd;
 } Window;
 
+typedef enum Event {
+    Opened, Render, Closed,
+} Event;
+
 // Sets Callback for a Window Context
 EXPORT bool SetCallback(const Window* self, void(*callback)());
 

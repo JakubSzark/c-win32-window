@@ -62,14 +62,14 @@ LRESULT CALLBACK WndProc(
                 // Make OpenGL work on current Context
                 window->glContext = wglCreateContext(hdc);
                 wglMakeCurrent(GetDC(hWnd), window->glContext);
-                window->eventCallback(0);
+                window->eventCallback(Opened);
             }
             break;
         case WM_PAINT: 
             {
                 // Update and Swap Buffer
                 SwapBuffers(GetDC(hWnd));
-                window->eventCallback(1);
+                window->eventCallback(Render);
             }
             break;
         case WM_DESTROY: 
@@ -77,7 +77,7 @@ LRESULT CALLBACK WndProc(
                 // Cleanup
                 wglDeleteContext(window->glContext);
                 PostQuitMessage(0);
-                window->eventCallback(2);                
+                window->eventCallback(Closed);                
             }
             break;
         default:
