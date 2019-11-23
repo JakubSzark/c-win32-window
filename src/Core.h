@@ -29,17 +29,11 @@
 
 /* Primitive Definitions */
 
+typedef const char* cstr;
 typedef unsigned char byte;
 typedef unsigned int uint;
 
 /* Struct Definitions */
-
-typedef struct Config 
-{
-    const char* title;
-    uint width, height, pixelSize;
-    bool fullscreen;
-} Config;
 
 typedef struct Color {
     byte red, green, blue, alpha;
@@ -47,28 +41,26 @@ typedef struct Color {
 
 typedef struct Window 
 {
-    Config config;
+    cstr title;
+    uint height;
+    uint width;
+
     HGLRC glContext;
-    HWND hWnd;
     void(*eventCallback)(int);
+    HWND hWnd;
 } Window;
 
-/* Exported Functions */
+// Sets Callback for a Window Context
+EXPORT bool SetCallback(const Window* self, void(*callback)());
 
-EXPORT bool CreateContext(const Config* cfg);
-EXPORT bool SetCallbacks(void(*onOpen)(), 
-    void(*onClose)(), void(*onLoop)());
-EXPORT void RefreshScreen(const Color* colors, 
-    uint width, uint height);
-EXPORT bool SetTitle(const char* newTitle);
+// Creates a Window Context
+EXPORT Window* CreateContext(cstr title, uint width, uint height);
 
-/* Globals */
+// Shows the Window Context on Screen
+EXPORT void ShowContext(const Window* window);
 
-static Config gConfig;
-static void(*gCallback)();
+// Cleans up the Window Context Pointer
+EXPORT void CleanupContext(Window* window);
 
-/* Functions */
-
-void Setup();
-void Cleanup();
-void Render();
+// Sets a Title for a Window Context
+EXPORT bool SetTitle(const Window* self, cstr newTitle);
