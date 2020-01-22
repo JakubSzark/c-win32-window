@@ -5,17 +5,32 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Windows DLL",
+            "label": "Object Compile",
             "command": "C:\\MingW64\\bin\\gcc.exe",
             "args": [
-                "-shared",
+                "-c",
                 "${workspaceFolder}\\src\\*.c",
                 "-o",
-                "${workspaceFolder}\\lib\\windows\\SzarkCore.dll",
+                "${workspaceFolder}\\obj\\SzarkCore.o",
                 "-lopengl32",
                 "-lgdi32",
-                "-static",
-                "-static-libgcc"
+                "-m32",
+            ],
+            "options": {
+                "cwd": "C:\\MingW64\\bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "Object Compile",
+            "command": "C:\\MingW64\\bin\\ar.exe",
+            "args": [
+                "rcs",
+                "${workspaceFolder}\\lib\\SzarkCore.lib",
+                "${workspaceFolder}\\obj\\SzarkCore.o",
             ],
             "options": {
                 "cwd": "C:\\MingW64\\bin"
@@ -26,7 +41,7 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
-        }
+            },
+        },  
     ]
 }
